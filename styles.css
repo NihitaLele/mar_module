@@ -4,13 +4,14 @@ body {
 }
 
 .container {
-    margin: 20px auto;
+    margin: 70px auto;
     width: 80%;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
+    margin-top: 15px;
 }
 
 td {
@@ -31,6 +32,7 @@ img {
 input[type="text"] {
     width: 750px;
     margin-right: 10px; 
+    margin-left: 45px;
     background-color: black;
     color: white;
     padding: 12px;

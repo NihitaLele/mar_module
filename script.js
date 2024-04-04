@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     searchInput.addEventListener('input', function(event) {
         clearTimeout(debounceTimeout);
-        debounceTimeout = setTimeout(searchByName, 300); // Debounce time set to 300ms
+        debounceTimeout = setTimeout(searchByName, 300); 
     });
 
     searchInput.addEventListener('keydown', function(event) {
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 async function fetchData() {
     try {
-        const response = await fetch('data.json');
+        const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false');
         const data = await response.json();
         renderCryptoTable(data);
     } catch (error) {
@@ -41,16 +41,14 @@ function renderCryptoTable(data) {
 
         const nameCell = document.createElement('td');
         nameCell.textContent = crypto.name;
-        nameCell.style.padding = '0';
         row.appendChild(nameCell);
 
         const symbolCell = document.createElement('td');
-        symbolCell.textContent = crypto.symbol;
-        symbolCell.style.padding = '0';
+        symbolCell.textContent = crypto.symbol.toUpperCase();
         row.appendChild(symbolCell);
 
         const priceCell = document.createElement('td');
-        priceCell.textContent = '$' + crypto.current_price.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        priceCell.textContent = '$' + crypto.current_price.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         row.appendChild(priceCell);
 
         const volumeCell = document.createElement('td');
@@ -69,7 +67,7 @@ function renderCryptoTable(data) {
         row.appendChild(percentageChangeCell);
 
         const marketCapCell = document.createElement('td');
-        marketCapCell.textContent = 'Mkt Cap: $' + crypto.market_cap.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+        marketCapCell.textContent = '$' + crypto.market_cap.toFixed(0).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
         row.appendChild(marketCapCell);
 
         cryptoTableBody.appendChild(row);
@@ -79,7 +77,7 @@ function renderCryptoTable(data) {
 async function searchByName() {
     const input = document.getElementById('searchInput').value.toLowerCase();
     try {
-        const response = await fetch('data.json');
+        const response = await fetch('https://api.coingecko.com/api/v3/coins/markets?vs_currency=usd&order=market_cap_desc&per_page=10&page=1&sparkline=false');
         const data = await response.json();
         const filteredData = data.filter(crypto => {
             const nameMatch = crypto.name.toLowerCase().includes(input);
@@ -96,8 +94,8 @@ function sortByMarketCap() {
     const cryptoTableBody = document.getElementById('cryptoTableBody');
     const rows = Array.from(cryptoTableBody.querySelectorAll('tr'));
     rows.sort((row1, row2) => {
-        const marketCap1 = parseFloat(row1.children[6].textContent.substring(10).replace(/,/g, ""));
-        const marketCap2 = parseFloat(row2.children[6].textContent.substring(10).replace(/,/g, ""));
+        const marketCap1 = parseFloat(row1.children[6].textContent.substring(1).replace(/,/g, ""));
+        const marketCap2 = parseFloat(row2.children[6].textContent.substring(1).replace(/,/g, ""));
         return marketCap2 - marketCap1;
     });
     cryptoTableBody.innerHTML = '';
@@ -108,8 +106,8 @@ function sortByPercentageChange() {
     const cryptoTableBody = document.getElementById('cryptoTableBody');
     const rows = Array.from(cryptoTableBody.querySelectorAll('tr'));
     rows.sort((row1, row2) => {
-        const percentageChange1 = parseFloat(row1.children[5].textContent.substring(1, row1.children[5].textContent.indexOf('%')));
-        const percentageChange2 = parseFloat(row2.children[5].textContent.substring(1, row2.children[5].textContent.indexOf('%')));
+        const percentageChange1 = parseFloat(row1.children[5].textContent.substring(0, row1.children[5].textContent.indexOf('%')));
+        const percentageChange2 = parseFloat(row2.children[5].textContent.substring(0, row2.children[5].textContent.indexOf('%')));
         return percentageChange2 - percentageChange1;
     });
     cryptoTableBody.innerHTML = '';
